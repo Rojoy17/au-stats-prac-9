@@ -1,0 +1,40 @@
+---
+title: "stats prac 9"
+format: html
+editor: visual
+---
+
+```{r}
+pacman::p_load(tidyverse, tidymodels, MASS)
+```
+
+```{r}
+Insurance <- MASS::Insurance
+```
+
+```{r}
+Insurance_longer <- Insurance %>% 
+  pivot_longer(
+    cols = c(Claims, Holders),
+    names_to = "Hold",
+    values_to = "count"
+  )
+Insurance_longer %>%
+  ggplot(aes(x = Age, y = count)) +
+  geom_boxplot(show.legend = FALSE,)+
+  facet_grid(Hold ~ ., scales = "free_y") +
+  theme_minimal() +
+  labs(
+    x = "Age",
+    y = "Count"
+  )
+```
+
+```{r}
+model_1 <- glm(Claims ~ District + Group + Age + log(Holders),family = poisson, data = Insurance)
+summary(model_1)
+```
+
+```{r}
+predict(model_1, type = "response")
+```
